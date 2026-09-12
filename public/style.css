@@ -1,0 +1,180 @@
+:root {
+    --ocean-blue: #0b1d2e;
+    --ocean-light: #163652;
+    --parchment: #f4e8c1;
+    --parchment-dark: #d4c497;
+    --brass: #c59b27;
+    --brass-dark: #8c6e1c;
+    --ink: #2c2518;
+    
+    --font-title: 'Cinzel', serif;
+    --font-text: 'Lora', serif;
+    --font-code: 'Space Mono', monospace;
+}
+
+body {
+    background-color: var(--ocean-blue);
+    background-image: radial-gradient(var(--ocean-light) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--parchment);
+    font-family: var(--font-text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.main-header {
+    text-align: center;
+    padding: 3rem 1rem;
+    border-bottom: 2px solid var(--brass);
+    background-color: rgba(11, 29, 46, 0.9);
+}
+
+.title {
+    font-family: var(--font-title);
+    color: var(--brass);
+    font-size: 3rem;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    font-family: var(--font-title);
+    color: var(--parchment-dark);
+    font-weight: 400;
+    margin: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.parchment-box {
+    background-color: var(--parchment);
+    color: var(--ink);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 4px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(140, 110, 28, 0.2);
+    position: relative;
+    border: 1px solid var(--parchment-dark);
+}
+
+.parchment-box::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px; right: 5px; bottom: 5px;
+    border: 1px solid rgba(140, 110, 28, 0.3);
+    pointer-events: none;
+}
+
+.parchment-box h2 {
+    font-family: var(--font-title);
+    color: var(--brass-dark);
+    text-align: center;
+    border-bottom: 1px dashed var(--brass-dark);
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+}
+
+.roteiro-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.roteiro-item h3 {
+    font-family: var(--font-title);
+    margin: 0 0 0.5rem 0;
+    color: var(--ink);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-title);
+    font-weight: bold;
+    color: var(--ink);
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 0.8rem;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--brass-dark);
+    border-radius: 2px;
+    font-family: var(--font-code);
+    color: var(--ink);
+    font-size: 1rem;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--ocean-blue);
+    background-color: #fff;
+}
+
+.btn-brass {
+    background-color: var(--brass);
+    color: var(--ocean-blue);
+    border: 2px solid var(--brass-dark);
+    padding: 1rem 2rem;
+    font-family: var(--font-title);
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.btn-brass:hover {
+    background-color: var(--brass-dark);
+    color: var(--parchment);
+}
+
+.status-msg {
+    margin-top: 1rem;
+    text-align: center;
+    font-family: var(--font-code);
+    font-weight: bold;
+}
+
+.success { color: #1e5631; }
+.error { color: #8a1c1c; }
+
+/* Admin specifics */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-code);
+    font-size: 0.9rem;
+}
+
+.admin-table th, .admin-table td {
+    padding: 0.75rem;
+    border: 1px solid var(--brass-dark);
+    text-align: left;
+}
+
+.admin-table th {
+    background-color: rgba(197, 155, 39, 0.2);
+    font-family: var(--font-title);
+}
+
+.btn-small {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    margin-right: 0.3rem;
+}

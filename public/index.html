@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embarcação Pirata - Diário de Bordo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <h1 class="title">Diário de Bordo</h1>
+        <h2 class="subtitle">Embarcação Pirata do Capitão Erick</h2>
+    </header>
+
+    <main class="container">
+        <section id="apresentacao" class="parchment-box" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 250px;">
+                <h2>O Capitão Erick Sub6</h2>
+                <p>Bem-vindos a bordo! Sou o Capitão Erick (@ericksub6), desbravador dos sete mares modernos. Ofereço roteiros exclusivos de Circuito de Base Comunitária e Expedições Submarinas na nossa belíssima costa.</p>
+                <p>Nossa base principal opera 100% isolada, alimentada por <strong>placas solares</strong> e baterias recarregáveis, mantendo comunicação através das antigas ondas do <strong>Rádio VHF e PX</strong>. Junte-se à minha tripulação e viva uma aventura rústica, autêntica e inesquecível!</p>
+            </div>
+        </section>
+
+        <section id="roteiros" class="parchment-box">
+            <h2>Nossas Expedições</h2>
+            <div class="roteiro-list">
+                <div class="roteiro-item">
+                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mergulho Submarino" style="width:100%; border-radius: 8px; margin-bottom: 15px; border: 2px solid #8b7355;">
+                    <h3>Expedição Submarina</h3>
+                    <p>Passeio espetacular acompanhado de mergulhadores profissionais. Desvende os segredos ocultos do fundo do mar, naufrágios e belezas marinhas exclusivas.</p>
+                </div>
+                <div class="roteiro-item">
+                    <img src="https://images.unsplash.com/photo-1620063259883-9b9dc4de6301?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Base Comunitária" style="width:100%; border-radius: 8px; margin-bottom: 15px; border: 2px solid #8b7355;">
+                    <h3>Circuito de Base Comunitária</h3>
+                    <p>Imersão cultural absoluta. Aprecie o melhor da cozinha regional com almoço servido a bordo ou na autêntica casa de um pescador e marisqueira local.</p>
+                </div>
+                <div class="roteiro-item">
+                    <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sobrevivência" style="width:100%; border-radius: 8px; margin-bottom: 15px; border: 2px solid #8b7355;">
+                    <h3>Acampamento de Sobrevivência</h3>
+                    <p>Para os destemidos! Acampamento em bases remotas alimentadas por placa solar. Comunicação total via Rádio VHF e PX. Uma verdadeira aventura pirata!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="reserva" class="parchment-box">
+            <h2>Alistamento (Reserva)</h2>
+            <form id="form-reserva">
+                <div class="form-group">
+                    <label for="nome">Nome do Marinheiro:</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="whatsapp">Mensageiro (WhatsApp):</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="roteiro">Escolha seu Mapa do Tesouro:</label>
+                    <select id="roteiro" name="roteiro" required>
+                        <option value="">-- Selecione uma expedição --</option>
+                        <option value="rot-3">Expedição Submarina (Mergulho)</option>
+                        <option value="rot-4">Circuito de Base Comunitária (Almoço Regional)</option>
+                        <option value="rot-5">Acampamento de Sobrevivência (Solar/VHF)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="data_passeio">Data da Partida:</label>
+                    <input type="date" id="data_passeio" name="data_passeio" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="num_pessoas">Número de Tripulantes (Pessoas):</label>
+                    <input type="number" id="num_pessoas" name="num_pessoas" min="1" max="10" required>
+                </div>
+
+                <button type="submit" class="btn-brass">Enviar Mensagem na Garrafa</button>
+                <p id="form-status" class="status-msg"></p>
+            </form>
+
+            <!-- Área do Pix (Oculta por padrão) -->
+            <div id="pix-area" style="display: none; text-align: center; margin-top: 20px;">
+                <h3>⚓ Pagamento do Alistamento</h3>
+                <p>Escaneie o QR Code abaixo no app do seu banco:</p>
+                <img id="pix-qrcode" src="" alt="QR Code Pix" style="max-width: 250px; border-radius: 8px; border: 2px solid #8b7355; margin: 10px 0;">
+                <p>Ou use o código Copia e Cola:</p>
+                <input type="text" id="pix-copiacola" readonly style="width: 100%; padding: 10px; text-align: center;">
+                <p style="font-size: 0.9em; margin-top: 15px;">Após o pagamento, o Capitão enviará um corvo (WhatsApp) com a confirmação!</p>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

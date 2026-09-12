@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Capitão - Aprovação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <h1 class="title">Cabine do Capitão</h1>
+        <h2 class="subtitle">Controle de Alistamentos</h2>
+    </header>
+
+    <main class="container">
+        <section class="parchment-box">
+            <h2>Solicitações Pendentes</h2>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Marinheiro</th>
+                            <th>WhatsApp</th>
+                            <th>Roteiro</th>
+                            <th>Data Desejada</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-reservas">
+                        <!-- Conteúdo será injetado pelo JS -->
+                    </tbody>
+                </table>
+            </div>
+            <p id="admin-status" class="status-msg"></p>
+        </section>
+    </main>
+    <script src="admin.js"></script>
+</body>
+</html>
