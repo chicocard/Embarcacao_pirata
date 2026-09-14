@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embarcação Pirata - Diário de Bordo</title>
+    <title>Embarcação Pirata — Passeios de barco em Caravelas, Bahia</title>
+    <meta name="description" content="Passeios de barco, mergulho e turismo de base comunitária em Caravelas, sul da Bahia, com o Capitão Erick. Reserve pelo site e pague por Pix.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Space+Mono&display=swap" rel="stylesheet">
@@ -12,87 +13,158 @@
 <body>
     <header class="main-header">
         <h1 class="title">Diário de Bordo</h1>
-        <h2 class="subtitle">Embarcação Pirata do Capitão Erick</h2>
+        <h2 class="subtitle">Embarcação Pirata do Capitão Erick &middot; Caravelas, Bahia</h2>
+        <nav class="nav-barra">
+            <a href="#roteiros">Roteiros</a>
+            <a href="#reserva">Reservar</a>
+            <a href="#comprovante">Enviar comprovante</a>
+            <a href="#consulta">Consultar reserva</a>
+        </nav>
     </header>
 
     <main class="container">
-        <section id="apresentacao" class="parchment-box" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 250px;">
-                <h2>O Capitão Erick Sub6</h2>
-                <p>Bem-vindos a bordo! Sou o Capitão Erick (@ericksub6), desbravador dos sete mares modernos. Ofereço roteiros exclusivos de Circuito de Base Comunitária e Expedições Submarinas na nossa belíssima costa.</p>
-                <p>Nossa base principal opera 100% isolada, alimentada por <strong>placas solares</strong> e baterias recarregáveis, mantendo comunicação através das antigas ondas do <strong>Rádio VHF e PX</strong>. Junte-se à minha tripulação e viva uma aventura rústica, autêntica e inesquecível!</p>
-            </div>
+
+        <section class="parchment-box">
+            <h2>O Capitão Erick</h2>
+            <p>Bem-vindos a bordo. Sou o Capitão Erick, de Caravelas, no sul da Bahia — porta de
+            entrada do Parque Nacional Marinho de Abrolhos. Levo gente ao mar há anos, e o que
+            ofereço não é um passeio de esteira: é navegação de verdade, com quem conhece a maré,
+            os bancos de areia e os pescadores da região.</p>
+            <p>Nossa base opera com <strong>painéis solares</strong> e baterias, e a comunicação é
+            por <strong>rádio VHF e PX</strong>. Colete salva-vidas e água são por nossa conta.
+            O resto da aventura é com você.</p>
         </section>
 
         <section id="roteiros" class="parchment-box">
-            <h2>Nossas Expedições</h2>
-            <div class="roteiro-list">
-                <div class="roteiro-item">
-                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mergulho Submarino" style="width:100%; border-radius: 8px; margin-bottom: 15px; border: 2px solid #8b7355;">
-                    <h3>Expedição Submarina</h3>
-                    <p>Passeio espetacular acompanhado de mergulhadores profissionais. Desvende os segredos ocultos do fundo do mar, naufrágios e belezas marinhas exclusivas.</p>
-                </div>
-                <div class="roteiro-item">
-                    <img src="https://images.unsplash.com/photo-1620063259883-9b9dc4de6301?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Base Comunitária" style="width:100%; border-radius: 8px; margin-bottom: 15px; border: 2px solid #8b7355;">
-                    <h3>Circuito de Base Comunitária</h3>
-                    <p>Imersão cultural absoluta. Aprecie o melhor da cozinha regional com almoço servido a bordo ou na autêntica casa de um pescador e marisqueira local.</p>
-                </div>
-                <div class="roteiro-item">
-                    <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sobrevivência" style="width:100%; border-radius: 8px; margin-bottom: 15px; border: 2px solid #8b7355;">
-                    <h3>Acampamento de Sobrevivência</h3>
-                    <p>Para os destemidos! Acampamento em bases remotas alimentadas por placa solar. Comunicação total via Rádio VHF e PX. Uma verdadeira aventura pirata!</p>
-                </div>
+            <h2>Nossas expedições</h2>
+            <p class="legenda">Preços por pessoa. A lista abaixo vem direto do sistema de reservas —
+            se o capitão muda um valor, ele muda aqui na hora.</p>
+            <div class="roteiro-list" id="lista-roteiros">
+                <p class="legenda">Carregando os roteiros...</p>
             </div>
         </section>
 
         <section id="reserva" class="parchment-box">
-            <h2>Alistamento (Reserva)</h2>
-            <form id="form-reserva">
-                <div class="form-group">
-                    <label for="nome">Nome do Marinheiro:</label>
-                    <input type="text" id="nome" name="nome" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="whatsapp">Mensageiro (WhatsApp):</label>
-                    <input type="tel" id="whatsapp" name="whatsapp" required>
+            <h2>Alistamento</h2>
+            <p class="legenda">Preencha e o sistema gera o Pix na hora. O capitão recebe o aviso no
+            celular no mesmo instante.</p>
+
+            <form id="form-reserva" novalidate>
+                <div class="linha-dupla">
+                    <div class="form-group">
+                        <label for="nome">Seu nome</label>
+                        <input type="text" id="nome" name="nome" required minlength="2" maxlength="80" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp">Seu WhatsApp</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" required placeholder="(73) 99999-9999" autocomplete="tel">
+                        <p class="ajuda-campo">É por aqui que o capitão vai falar com você.</p>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="roteiro">Escolha seu Mapa do Tesouro:</label>
+                    <label for="roteiro">Roteiro</label>
                     <select id="roteiro" name="roteiro" required>
-                        <option value="">-- Selecione uma expedição --</option>
-                        <option value="rot-3">Expedição Submarina (Mergulho)</option>
-                        <option value="rot-4">Circuito de Base Comunitária (Almoço Regional)</option>
-                        <option value="rot-5">Acampamento de Sobrevivência (Solar/VHF)</option>
+                        <option value="">Selecione uma expedição</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="data_passeio">Data da Partida:</label>
-                    <input type="date" id="data_passeio" name="data_passeio" required>
+                <div class="linha-dupla">
+                    <div class="form-group">
+                        <label for="data_passeio">Data</label>
+                        <input type="date" id="data_passeio" name="data_passeio" required>
+                        <p class="ajuda-campo" id="aviso-vagas"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="num_pessoas">Pessoas</label>
+                        <input type="number" id="num_pessoas" name="num_pessoas" min="1" max="20" value="2" required>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="num_pessoas">Número de Tripulantes (Pessoas):</label>
-                    <input type="number" id="num_pessoas" name="num_pessoas" min="1" max="10" required>
+                <div class="aviso-caixa" id="caixa-total">
+                    Total: <strong id="valor-total">selecione o roteiro e o número de pessoas</strong>
                 </div>
 
-                <button type="submit" class="btn-brass">Enviar Mensagem na Garrafa</button>
+                <button type="submit" class="btn-brass" id="btn-enviar">Gerar meu Pix</button>
                 <p id="form-status" class="status-msg"></p>
             </form>
 
-            <!-- Área do Pix (Oculta por padrão) -->
-            <div id="pix-area" style="display: none; text-align: center; margin-top: 20px;">
-                <h3>⚓ Pagamento do Alistamento</h3>
-                <p>Escaneie o QR Code abaixo no app do seu banco:</p>
-                <img id="pix-qrcode" src="" alt="QR Code Pix" style="max-width: 250px; border-radius: 8px; border: 2px solid #8b7355; margin: 10px 0;">
-                <p>Ou use o código Copia e Cola:</p>
-                <input type="text" id="pix-copiacola" readonly style="width: 100%; padding: 10px; text-align: center;">
-                <p style="font-size: 0.9em; margin-top: 15px;">Após o pagamento, o Capitão enviará um corvo (WhatsApp) com a confirmação!</p>
+            <div id="pix-area" class="pix-area escondido">
+                <hr style="border:none;border-top:1px solid var(--pergaminho-escuro);margin:28px 0">
+                <h2>Pague para garantir o lugar</h2>
+
+                <dl class="resumo-reserva">
+                    <dt>Código</dt><dd id="res-codigo"></dd>
+                    <dt>Roteiro</dt><dd id="res-roteiro"></dd>
+                    <dt>Data</dt><dd id="res-data"></dd>
+                    <dt>Pessoas</dt><dd id="res-pessoas"></dd>
+                    <dt>Valor</dt><dd id="res-valor"></dd>
+                </dl>
+
+                <img id="pix-qrcode" src="" alt="QR Code do Pix">
+
+                <p class="legenda" style="margin:14px 0 4px">Ou copie o código abaixo:</p>
+                <div class="pix-codigo" id="pix-copiacola"></div>
+                <button type="button" class="btn-brass btn-small btn-neutro" id="btn-copiar">Copiar código Pix</button>
+
+                <div class="aviso-caixa" style="text-align:left;margin-top:24px">
+                    <strong>Falta um passo.</strong> Depois de pagar, envie o comprovante logo abaixo.
+                    Sua vaga só fica garantida quando o capitão confere o pagamento — e ele te avisa
+                    no WhatsApp assim que confirmar.
+                </div>
             </div>
         </section>
+
+        <section id="comprovante" class="parchment-box">
+            <h2>Enviar comprovante</h2>
+            <p class="legenda">Pagou o Pix? Mande o comprovante aqui. Aceita foto (JPG, PNG, WEBP) ou PDF, até 5 MB.</p>
+
+            <form id="form-comprovante" novalidate>
+                <div class="form-group">
+                    <label for="comp-codigo">Código da reserva</label>
+                    <input type="text" id="comp-codigo" maxlength="6" placeholder="ABC123" style="text-transform:uppercase" required>
+                    <p class="ajuda-campo">São os 6 caracteres que aparecem quando você gera o Pix.</p>
+                </div>
+                <div class="form-group">
+                    <label for="comp-arquivo">Comprovante</label>
+                    <input type="file" id="comp-arquivo" accept="image/jpeg,image/png,image/webp,application/pdf" required>
+                </div>
+                <button type="submit" class="btn-brass" id="btn-comprovante">Enviar comprovante</button>
+                <p id="comp-status" class="status-msg"></p>
+            </form>
+        </section>
+
+        <section id="consulta" class="parchment-box">
+            <h2>Consultar reserva</h2>
+            <p class="legenda">Quer saber se o capitão já confirmou? Digite o código.</p>
+            <form id="form-consulta" novalidate>
+                <div class="form-group">
+                    <label for="cons-codigo">Código</label>
+                    <input type="text" id="cons-codigo" maxlength="6" placeholder="ABC123" style="text-transform:uppercase" required>
+                </div>
+                <button type="submit" class="btn-brass btn-neutro">Consultar</button>
+                <div id="cons-resultado" class="status-msg"></div>
+            </form>
+        </section>
+
+        <section class="parchment-box">
+            <h2>Como funciona</h2>
+            <ol class="passos">
+                <li>Você escolhe o roteiro e a data aqui no site.</li>
+                <li>O sistema gera o Pix na hora, já com o valor certo.</li>
+                <li>Você paga e envia o comprovante nesta mesma página.</li>
+                <li>O capitão confere e confirma. Você recebe a confirmação no WhatsApp.</li>
+                <li>Na véspera, chega um lembrete com o horário e o que levar.</li>
+            </ol>
+        </section>
+
     </main>
+
+    <footer class="rodape">
+        <p>Embarcação Pirata &middot; Caravelas, Bahia<br>
+        Dúvidas? Chame o capitão no WhatsApp.</p>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>

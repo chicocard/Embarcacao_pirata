@@ -1,61 +1,61 @@
-const http = require('http');
+'use strict';
 
-function gerarLegendaOllama(descricaoFoto) {
-    return new Promise((resolve, reject) => {
-        const prompt = \`Você é o capitão Erick Zebedeu da Embarcação Pirata, passeios de lancha em Caravelas, Bahia. 
-O tema é diário de bordo e pirata amigável.
-Crie uma legenda curta (máximo 4 linhas) e engajadora para o Instagram sobre esta foto/vídeo: "\${descricaoFoto}".
-Não inclua aspas na resposta, apenas a legenda pronta e adicione algumas hashtags.\`;
+/**
+ * Gerador de legenda para as redes sociais.
+ *
+ * O capitao manda no proprio WhatsApp:  post: baleia jubarte pulando hoje
+ * e recebe de volta a legenda pronta para copiar e colar.
+ *
+ * (O arquivo anterior nao compilava: as crases estavam escapadas com barra
+ *  invertida, o que e erro de sintaxe em JavaScript. Alem disso ele nunca era
+ *  importado em lugar nenhum, entao o recurso nao existia de fato.)
+ */
 
-        const data = JSON.stringify({
-            model: process.env.OLLAMA_MODEL || 'qwen2.5:3b',
-            prompt: prompt,
-            stream: false
-        });
+const config = require('../config');
+const log = require('../lib/log').fazer('Conteudo');
+const llm = require('./llm');
 
-        const options = {
-            hostname: 'localhost',
-            port: 11434,
-            path: '/api/generate',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Content-Length': data.length
-            }
-        };
+const SISTEMA = `Voce escreve legendas de Instagram para a Embarcacao Pirata, passeios de barco em Caravelas, sul da Bahia, do ${config.capitao.nome}.
 
-        const req = http.request(options, (res) => {
-            let body = '';
-            res.on('data', chunk => body += chunk);
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(body);
-                    resolve(json.response.trim());
-                } catch (e) {
-                    reject(e);
-                }
-            });
-        });
+Regras:
+- Portugues do Brasil, no maximo 4 linhas.
+- Tom de diario de bordo: humano, concreto, sem clichê de turismo e sem exagero.
+- Nada de promessa de preco ou de data.
+- Termine com 4 a 6 hashtags relevantes, em uma linha so.
+- Devolva SO a legenda, sem aspas e sem comentario seu.`;
 
-        req.on('error', e => reject(e));
-        req.write(data);
-        req.end();
-    });
+async function gerarLegenda(descricao) {
+    return llm.perguntar(
+        SISTEMA,
+        `Escreva a legenda para esta foto ou video: "${descricao}"`,
+        { temperatura: 0.8, maxTokens: 200 }
+    );
 }
 
-async function handleConteudoMessage(mensagem, responder) {
-    if (mensagem.toLowerCase().startsWith('post: ')) {
-        const descricao = mensagem.substring(6).trim();
-        try {
-            const legenda = await gerarLegendaOllama(descricao);
-            await responder(\`🏴‍☠️ *Sugestão de Legenda:*\n\n\${legenda}\`);
-        } catch (error) {
-            console.error('Erro ao gerar legenda:', error);
-            await responder('Ahoy! Tive um problema no maquinário (Ollama) ao gerar a legenda.');
-        }
-        return true; // handled
+/**
+ * Trata a mensagem do capitao se ela comecar com "post:".
+ * Devolve o texto da resposta, ou null se nao for esse comando.
+ */
+async function tratar(mensagem) {
+    const m = String(mensagem || '').match(/^\s*post\s*:\s*(.+)$/is);
+    if (!m) return null;
+
+    const descricao = m[1].trim();
+    if (descricao.length < 3) {
+        return 'Me diga sobre o que e o post. Exemplo:\npost: baleia jubarte pulando perto do barco';
     }
-    return false; // not handled
+
+    if (!(await llm.verificar())) {
+        return 'O assistente de texto (Ollama) esta fora do ar agora. Nao consegui gerar a legenda.';
+    }
+
+    try {
+        const legenda = await gerarLegenda(descricao);
+        return `SUGESTAO DE LEGENDA\n\n${legenda.replace(/^["']|["']$/g, '').trim()}`;
+    } catch (e) {
+        log.erro('Falha ao gerar legenda: ' + e.message);
+        return 'Deu problema no maquinario ao gerar a legenda. Tente de novo daqui a pouco.';
+    }
 }
 
-module.exports = { handleConteudoMessage };
+module.exports = { tratar, gerarLegenda };

@@ -3,41 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Capitão - Aprovação</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>Cabine do Capitão</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="main-header">
-        <h1 class="title">Cabine do Capitão</h1>
-        <h2 class="subtitle">Controle de Alistamentos</h2>
-    </header>
 
-    <main class="container">
-        <section class="parchment-box">
-            <h2>Solicitações Pendentes</h2>
-            <div style="overflow-x: auto;">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Data/Hora</th>
-                            <th>Marinheiro</th>
-                            <th>WhatsApp</th>
-                            <th>Roteiro</th>
-                            <th>Data Desejada</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lista-reservas">
-                        <!-- Conteúdo será injetado pelo JS -->
-                    </tbody>
-                </table>
+    <!-- ================= LOGIN ================= -->
+    <div id="tela-login">
+        <header class="main-header">
+            <h1 class="title">Cabine do Capitão</h1>
+            <h2 class="subtitle">Acesso restrito</h2>
+        </header>
+        <div class="container">
+            <div class="parchment-box caixa-login">
+                <form id="form-login" novalidate>
+                    <div class="form-group">
+                        <label for="login-usuario">Usuário</label>
+                        <input type="text" id="login-usuario" autocomplete="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-senha">Senha</label>
+                        <input type="password" id="login-senha" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="btn-brass" style="width:100%">Entrar</button>
+                    <p id="login-status" class="status-msg"></p>
+                </form>
             </div>
-            <p id="admin-status" class="status-msg"></p>
-        </section>
-    </main>
+        </div>
+    </div>
+
+    <!-- ================= PAINEL ================= -->
+    <div id="tela-painel" class="escondido">
+        <header class="main-header">
+            <h1 class="title">Cabine do Capitão</h1>
+            <h2 class="subtitle" id="barra-sistema">carregando...</h2>
+            <nav class="nav-barra">
+                <a href="#" data-aba="hoje">Hoje</a>
+                <a href="#" data-aba="conferir">A conferir</a>
+                <a href="#" data-aba="reservas">Todas as reservas</a>
+                <a href="#" data-aba="conversas">Conversas</a>
+                <a href="#" data-aba="agenda">Agenda</a>
+                <a href="#" data-aba="ajustes">Ajustes</a>
+                <a href="#" id="btn-sair">Sair</a>
+            </nav>
+        </header>
+
+        <main class="container">
+
+            <section class="cartoes" id="cartoes"></section>
+
+            <!-- HOJE -->
+            <section class="parchment-box aba" data-aba="hoje">
+                <h2>Passeios de hoje</h2>
+                <div class="rolagem-lateral"><table class="admin-table">
+                    <thead><tr><th>Roteiro</th><th>Cliente</th><th>Pessoas</th><th>Valor</th><th>Situação</th><th></th></tr></thead>
+                    <tbody id="tab-hoje"></tbody>
+                </table></div>
+
+                <h2 style="margin-top:32px">Amanhã</h2>
+                <div class="rolagem-lateral"><table class="admin-table">
+                    <thead><tr><th>Roteiro</th><th>Cliente</th><th>Pessoas</th><th>Valor</th><th>Situação</th><th></th></tr></thead>
+                    <tbody id="tab-amanha"></tbody>
+                </table></div>
+            </section>
+
+            <!-- A CONFERIR -->
+            <section class="parchment-box aba escondido" data-aba="conferir">
+                <h2>Comprovantes a conferir</h2>
+                <p class="legenda">Clique em "ver comprovante" para abrir a imagem que o cliente enviou.</p>
+                <div class="rolagem-lateral"><table class="admin-table">
+                    <thead><tr><th>Código</th><th>Cliente</th><th>Roteiro</th><th>Data</th><th>Valor</th><th>Ações</th></tr></thead>
+                    <tbody id="tab-conferir"></tbody>
+                </table></div>
+
+                <h2 style="margin-top:32px">Reservas sem comprovante</h2>
+                <div class="rolagem-lateral"><table class="admin-table">
+                    <thead><tr><th>Código</th><th>Cliente</th><th>Roteiro</th><th>Data</th><th>Valor</th><th></th></tr></thead>
+                    <tbody id="tab-sem-comprovante"></tbody>
+                </table></div>
+            </section>
+
+            <!-- TODAS -->
+            <section class="parchment-box aba escondido" data-aba="reservas">
+                <h2>Todas as reservas</h2>
+                <div class="form-group" style="max-width:280px">
+                    <label for="filtro-status">Filtrar</label>
+                    <select id="filtro-status">
+                        <option value="">Todas</option>
+                        <option value="aguardando_pagamento">Aguardando pagamento</option>
+                        <option value="confirmada">Confirmadas</option>
+                        <option value="concluida">Concluídas</option>
+                        <option value="cancelada">Canceladas</option>
+                    </select>
+                </div>
+                <div class="rolagem-lateral"><table class="admin-table">
+                    <thead><tr><th>Código</th><th>Data</th><th>Cliente</th><th>Roteiro</th><th>Pessoas</th><th>Valor</th><th>Situação</th></tr></thead>
+                    <tbody id="tab-reservas"></tbody>
+                </table></div>
+            </section>
+
+            <!-- CONVERSAS -->
+            <section class="parchment-box aba escondido" data-aba="conversas">
+                <h2>Conversas no WhatsApp</h2>
+                <p class="legenda">Últimas 72 horas. "Robô" = atendimento automático; "Você" = o robô está calado.</p>
+                <div class="conversa-lista" id="lista-conversas"></div>
+
+                <div id="janela-conversa" class="escondido" style="margin-top:28px">
+                    <h2 id="conversa-titulo"></h2>
+                    <div id="conversa-mensagens" style="max-height:380px;overflow-y:auto;padding:8px 0"></div>
+                    <div class="form-group">
+                        <label for="conversa-texto">Responder</label>
+                        <textarea id="conversa-texto" rows="3"></textarea>
+                    </div>
+                    <button class="btn-brass btn-small" id="btn-conversa-enviar">Enviar</button>
+                    <button class="btn-brass btn-small btn-neutro" id="btn-conversa-bot">Devolver ao robô</button>
+                    <button class="btn-brass btn-small btn-neutro" id="btn-conversa-calar">Silenciar</button>
+                    <p id="conversa-status" class="status-msg"></p>
+                </div>
+            </section>
+
+            <!-- AGENDA -->
+            <section class="parchment-box aba escondido" data-aba="agenda">
+                <h2>Datas bloqueadas</h2>
+                <p class="legenda">Dia bloqueado não aceita reserva pelo site.</p>
+                <form id="form-bloqueio">
+                    <div class="linha-dupla">
+                        <div class="form-group">
+                            <label for="bloq-data">Data</label>
+                            <input type="date" id="bloq-data" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bloq-motivo">Motivo</label>
+                            <input type="text" id="bloq-motivo" placeholder="mar ruim, manutenção...">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-brass btn-small">Bloquear</button>
+                </form>
+                <div class="rolagem-lateral" style="margin-top:20px"><table class="admin-table">
+                    <thead><tr><th>Data</th><th>Motivo</th><th></th></tr></thead>
+                    <tbody id="tab-bloqueios"></tbody>
+                </table></div>
+            </section>
+
+            <!-- AJUSTES -->
+            <section class="parchment-box aba escondido" data-aba="ajustes">
+                <h2>Roteiros e preços</h2>
+                <p class="legenda">Mudou aqui, muda no site e nas respostas automáticas do WhatsApp.</p>
+                <div id="lista-roteiros-admin"></div>
+
+                <h2 style="margin-top:36px">Respostas do robô</h2>
+                <p class="legenda">O que o robô sabe responder. Escreva como você falaria com o cliente.</p>
+                <div id="lista-conhecimento"></div>
+
+                <h2 style="margin-top:36px">Trocar minha senha</h2>
+                <form id="form-senha" style="max-width:420px">
+                    <div class="form-group">
+                        <label for="senha-atual">Senha atual</label>
+                        <input type="password" id="senha-atual" autocomplete="current-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="senha-nova">Senha nova (mínimo 12 caracteres)</label>
+                        <input type="password" id="senha-nova" autocomplete="new-password" required minlength="12">
+                    </div>
+                    <button type="submit" class="btn-brass btn-small">Trocar senha</button>
+                    <p id="senha-status" class="status-msg"></p>
+                </form>
+            </section>
+
+        </main>
+    </div>
+
     <script src="admin.js"></script>
 </body>
 </html>

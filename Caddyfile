@@ -1,0 +1,22 @@
+# Troque seudominio.com.br pelo seu dominio de verdade.
+# O Caddy pega o certificado HTTPS sozinho, de graca, e renova sozinho.
+#
+# Se voce ainda nao tem dominio, apague as duas primeiras linhas e deixe so
+# ":80 {" no lugar - mas ai o painel do capitao roda SEM criptografia, e a
+# senha dele viaja em texto puro. Nao faca isso em producao.
+
+seudominio.com.br, www.seudominio.com.br {
+	encode gzip
+
+	# O painel do capitao nunca deve ser indexado por buscador
+	header /admin.html X-Robots-Tag "noindex, nofollow"
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	reverse_proxy 127.0.0.1:3000
+}

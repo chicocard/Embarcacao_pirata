@@ -1,58 +1,112 @@
+'use strict';
+
+/**
+ * Recebimento do comprovante de Pix.
+ *
+ * O que mudou em relacao a versao anterior, e por que:
+ *
+ *  1. O arquivo NAO vai mais para public/uploads/. Ia para uma pasta servida
+ *     estaticamente: qualquer pessoa podia subir um .html com script e ele
+ *     seria servido no dominio do site. Agora vai para data/comprovantes/,
+ *     fora da pasta publica, e so sai de la por uma rota autenticada.
+ *  2. Tipo e tamanho sao conferidos (imagem ou PDF, ate 5 MB), e o nome do
+ *     arquivo e gerado por nos: nada vindo do navegador entra no caminho.
+ *  3. O VALOR nao vem mais do formulario. Vem da reserva, no banco. Antes
+ *     dava para forjar um pagamento de R$ 1,00 numa reserva de R$ 2.500.
+ */
+
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const db = require('../db');
-const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+const config = require('../config');
+const log = require('../lib/log').fazer('Pagamentos');
+const servicoPagamentos = require('../services/pagamentos');
+const servicoReservas = require('../services/reservas');
+const notificador = require('../agents/notificador');
+const { exigirLogin } = require('../middleware/auth');
 
-// Configuração do multer para upload de comprovantes (salvo na pasta public/uploads)
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../../public/uploads/'))
-    },
-    filename: function (req, file, cb) {
-        cb(null, 'comprovante_' + Date.now() + path.extname(file.originalname))
+const PASTA = process.env.COMPROVANTES_DIR ||
+              path.join(process.env.DATA_DIR || path.join(__dirname, '../../data'), 'comprovantes');
+if (!fs.existsSync(PASTA)) fs.mkdirSync(PASTA, { recursive: true });
+
+const EXTENSOES = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+    'image/webp': '.webp',
+    'application/pdf': '.pdf'
+};
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => cb(null, PASTA),
+        filename: (req, file, cb) => {
+            // nome gerado por nos: o navegador nao escolhe caminho nem extensao
+            cb(null, crypto.randomUUID() + (EXTENSOES[file.mimetype] || '.bin'));
+        }
+    }),
+    limits: { fileSize: config.upload.maxBytes, files: 1, fields: 5 },
+    fileFilter: (req, file, cb) => {
+        if (!config.upload.tiposAceitos.includes(file.mimetype)) {
+            return cb(new Error('Envie uma foto (JPG, PNG ou WEBP) ou um PDF.'));
+        }
+        cb(null, true);
     }
 });
-const upload = multer({ storage: storage });
 
-router.post('/upload', upload.single('comprovante'), (req, res) => {
-    const { reserva_id, valor_centavos } = req.body;
-    
-    if (!req.file || !reserva_id || !valor_centavos) {
-        return res.status(400).json({ error: 'Faltam dados ou arquivo do comprovante.' });
-    }
+function apagar(nome) {
+    try { fs.unlinkSync(path.join(PASTA, nome)); } catch { /* ja nao existe */ }
+}
 
-    try {
-        const url_arquivo = '/uploads/' + req.file.filename;
-        const pagamento_id = crypto.randomUUID();
-        const criado_em = Date.now();
+router.post('/upload', (req, res) => {
+    upload.single('comprovante')(req, res, (erroUpload) => {
+        if (erroUpload) {
+            const msg = erroUpload.code === 'LIMIT_FILE_SIZE'
+                ? `Arquivo grande demais. O limite e ${Math.round(config.upload.maxBytes / 1024 / 1024)} MB.`
+                : erroUpload.message;
+            return res.status(400).json({ erro: msg });
+        }
 
-        // Inserir registro de pagamento e atualizar status da reserva
-        const transaction = db.transaction(() => {
-            db.prepare(`
-                INSERT INTO pagamentos (id, reserva_id, metodo, valor_centavos, comprovante_url, status, criado_em)
-                VALUES (?, ?, 'pix', ?, ?, 'aguardando_confirmacao', ?)
-            `).run(pagamento_id, reserva_id, valor_centavos, url_arquivo, criado_em);
+        if (!req.file) return res.status(400).json({ erro: 'Anexe o comprovante.' });
 
-            db.prepare(`
-                UPDATE reservas SET status = 'pendente' WHERE id = ?
-            `).run(reserva_id); // Pode mudar para aguardando_pagamento se houvesse no schema
+        const reservaId = String((req.body && req.body.reserva_id) || '').trim();
+        if (!reservaId) {
+            apagar(req.file.filename);
+            return res.status(400).json({ erro: 'Reserva nao informada.' });
+        }
+
+        const r = servicoPagamentos.registrarComprovante(reservaId, req.file.filename, req.file.mimetype);
+        if (!r.ok) {
+            apagar(req.file.filename);
+            return res.status(400).json({ erro: r.erro });
+        }
+
+        notificador.comprovanteRecebido(r.reserva, r.pagamento);
+        log.info(`Comprovante recebido da reserva ${reservaId}`);
+
+        res.json({
+            sucesso: true,
+            mensagem: 'Comprovante recebido. O capitao vai conferir e te avisar no WhatsApp.'
         });
-        
-        transaction();
+    });
+});
 
-        // Notificar o admin
-        require('../agents/notificador').notificar(
-            process.env.ERICK_WHATSAPP,
-            `💰 *Novo Comprovante de Pagamento!*\n\nReserva: ${reserva_id}\nValor: R$ ${(valor_centavos/100).toFixed(2)}\n\nAcesse o painel para confirmar.`
-        );
+/** Download do comprovante: SO para o capitao logado. */
+router.get('/comprovante/:arquivo', exigirLogin, (req, res) => {
+    const nome = path.basename(String(req.params.arquivo));      // barra travessia de diretorio
+    const pagamento = servicoPagamentos.porArquivo(nome);
+    if (!pagamento) return res.status(404).json({ erro: 'Comprovante nao encontrado.' });
 
-        res.json({ sucesso: true, mensagem: 'Comprovante recebido com sucesso' });
-    } catch (err) {
-        console.error('Erro ao salvar comprovante:', err);
-        res.status(500).json({ error: 'Erro interno' });
-    }
+    const caminho = path.join(PASTA, nome);
+    if (!fs.existsSync(caminho)) return res.status(404).json({ erro: 'Arquivo nao esta mais no servidor.' });
+
+    res.setHeader('Content-Type', pagamento.comprovante_mime || 'application/octet-stream');
+    res.setHeader('Content-Disposition', 'inline');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.sendFile(caminho);
 });
 
 module.exports = router;
+module.exports.PASTA_COMPROVANTES = PASTA;
